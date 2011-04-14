@@ -1,22 +1,48 @@
-django-virtualenv-wsgi
-======================
+django-wsgihandler
+==================
 
-**WSGI script for usage in Virtalenvs with Apache - Embedded mod_wsgi**
+Django WSGI handler setting up a proper environment based on Virtualenv,
+with possible server maintenance message (503 Service Unavailable) responding.
 
-Features:
----------
+Usage
+-----
 
-- Runs with same settings (sys.path, default language etc.) as the
-  Django-built-in dev server
-- Guesses source dirs using a glob -- it should run out of the box, without
-  the redundancy of ``os.environ['DJANGO_SETTINGS_MODULE']``!
-  
-Installation:
--------------
+Default project tree should look like::
 
-Don't bother cloning git repository, unless you're willing to improve this
-script in your fork. You can download latest version by simply typing:
+    some_project
+    |- _env/
+    |- django_project/
+    |- django.wsgi
+    |- maintenance.html
+    |- maintenance.lock
 
-``wget https://github.com/hint/django-virtualenv-wsgi/raw/master/django.wsgi``
+* ``_env/``
+  virtualenv environment directory
+* ``django_project/``
+  django project package directory
+* ``django.wsgi``
+  a django.wsgi file from this package
+* ``maintenance.html``
+  a HTML file (UTF-8 encoded) with which server will respond in maintenance mode
+* ``maintenance.lock``
+  maintenance mode lock -- see below
 
-The git-repo is here: https://github.com/hint/django-virtualenv-wsgi
+You must make sure that your Django project directory name is same as in a ``django.wsgi``'s
+``PROJECT_NAME`` setting.
+
+Maintenance mode
+----------------
+
+To enable maintenance mode just create a ``maintenance.lock`` file in the same directory
+``django.wsgi`` is located, and tell your server to reload the WSGI handler. You can do
+all of this with a simple line::
+
+    $ touch maintenance.lock ; touch django.wsgi
+
+To disable maintenance mode just remove ``maintenance.lock`` and reload the handler::
+
+    $ rm maintenance.lock ; touch django.wsgi
+
+In case ``maintenance.html`` doesn't exist server will respond with default plain text message
+(you can change it with ``django.wsgi``'s ``MAINTENANCE_MESSAGE_FALLBACK`` setting). 
+
