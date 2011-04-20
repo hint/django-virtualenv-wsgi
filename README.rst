@@ -1,5 +1,5 @@
-django-wsgihandler
-==================
+django-virtualenv-wsgi
+======================
 
 Django WSGI handler setting up a proper environment based on Virtualenv,
 with possible server maintenance message (503 Service Unavailable) responding.
