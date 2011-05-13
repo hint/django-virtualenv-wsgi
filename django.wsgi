@@ -33,27 +33,14 @@ def get_django_wsgi_application():
 
     PYTHON_ENV_PATH = os.path.join(BASE_PATH, '_env')
 
-    PYTHON_LIB_PATH = os.path.join(PYTHON_ENV_PATH, 'lib', 'python%d.%d' % sys.version_info[:2])
-    PYTHON_SRC_PATH = os.path.join(PYTHON_ENV_PATH, 'src')
+    PYTHON_ENV_ACTIVATOR = os.path.join(PYTHON_ENV_PATH, 'bin', 'activate_this.py')
 
-    SITE_PACKAGES_PATH = os.path.join(PYTHON_LIB_PATH, 'site-packages')
+    # Activate virtualenv
+    execfile(PYTHON_ENV_ACTIVATOR, dict(__file__=PYTHON_ENV_ACTIVATOR))
 
-    # Add most important import paths do PATH
+    # Insert important import paths at the beginning of PATH
     sys.path.insert(0, PROJECT_PATH)
     sys.path.insert(1, BASE_PATH)
-    sys.path.insert(2, SITE_PACKAGES_PATH)
-
-    # Packages with version-controlled source are installed under _env/src/package_name, so
-    # each such directory must be added to PATH
-    try:
-        sys.path.extend((os.path.join(PYTHON_SRC_PATH, a) for a in os.listdir(PYTHON_SRC_PATH)
-                         if os.path.isdir(os.path.join(PYTHON_SRC_PATH, a))))
-    except OSError:
-        # Apparently there's no _env/src/ directory. Nevermind.
-        pass
-
-    # Add site packages directory
-    site.addsitedir(SITE_PACKAGES_PATH)
 
     # Import project settings
     import settings as project_settings
